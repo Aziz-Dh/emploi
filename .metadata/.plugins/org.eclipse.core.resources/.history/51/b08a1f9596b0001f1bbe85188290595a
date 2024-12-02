@@ -1,0 +1,53 @@
+package com.example.backend;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SeanceService {
+
+    @Autowired
+    private SeanceRepository seanceRepository;
+
+    @Autowired
+    private ProfesseurRepository professeurRepository;
+
+    @Autowired
+    private ClasseRepository classeRepository;
+
+    // Get all Seance
+    public List<Seance> getAllSeance() {
+        return seanceRepository.findAll();
+    }
+
+    // Get Seance by id
+    public Seance getSeanceById(Long id) {
+        return seanceRepository.findById(id).orElse(null);
+    }
+
+    // Save Seance
+    public Seance saveSeance(Seance seance) {
+        // Fetch Professeur and Classe by their IDs
+        Professeur professeur = professeurRepository.findById(seance.getProfesseur().getId()).orElse(null);
+        Classe classe = classeRepository.findById(seance.getClasse().getId()).orElse(null);
+
+        // If either Professeur or Classe is not found, throw an exception
+        if (professeur == null || classe == null) {
+            throw new IllegalArgumentException("Invalid Professeur or Classe ID");
+        }
+
+        // Set Professeur and Classe to Seance
+        seance.setProfesseur(professeur);
+        seance.setClasse(classe);
+
+        // Save and return the Seance with correct references
+        return seanceRepository.save(seance);
+    }
+
+    // Delete Seance by id
+    public void deleteSeance(Long id) {
+        seanceRepository.deleteById(id);
+    }
+}

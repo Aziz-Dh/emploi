@@ -1,0 +1,96 @@
+package com.example.backend;
+
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
+@Entity
+public class Seance {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String jour;
+    private LocalDateTime dateHeureDebut;
+    private LocalDateTime dateHeureFin;
+    private String matiere;
+
+    @ManyToOne
+    @JoinColumn(name = "professeur_id")  // Ensure this is mapped correctly
+    private Professeur professeur;
+
+    @ManyToOne
+    @JoinColumn(name = "classe_id")  // Ensure this is mapped correctly
+    private Classe classe;
+
+    // Getters and setters
+}
+
+	 
+	 // Getter pour l'identifiant
+	    public Long getId() {
+	        return id;
+	    }
+
+	    // Setter pour l'identifiant
+	    public void setId(Long id) {
+	        this.id = id;
+	    }
+
+	    // Getter pour la date et l'heure de début
+	    public LocalDateTime getDateHeureDebut() {
+	        return dateHeureDebut;
+	    }
+
+	    // Setter pour la date et l'heure de début
+	    public void setDateHeureDebut(LocalDateTime dateHeureDebut) {
+	        this.dateHeureDebut = dateHeureDebut;
+	    }
+
+	    // Getter pour la date et l'heure de fin
+	    public LocalDateTime getDateHeureFin() {
+	        return dateHeureFin;
+	    }
+
+	    // Setter pour la date et l'heure de fin
+	    public void setDateHeureFin(LocalDateTime dateHeureFin) {
+	        this.dateHeureFin = dateHeureFin;
+	    }
+
+	    // Getter pour la matière
+	    public String getMatiere() {
+	        return matiere;
+	    }
+
+	    // Setter pour la matière
+	    public void setMatiere(String matiere) {
+	        this.matiere = matiere;
+	    }
+
+	    // Getter pour la classe
+	    public Classe getClasse() {
+	        return classe;
+	    }
+
+	    // Setter pour la classe
+	    public void setClasse(Classe classe) {
+	        this.classe = classe;
+	    }
+
+	    // Getter pour le professeur
+	    public Professeur getProfesseur() {
+	        return professeur;
+	    }
+
+	    // Setter pour le professeur
+	    public void setProfesseur(Professeur professeur) {
+	        this.professeur = professeur;
+	    }
+	
+}

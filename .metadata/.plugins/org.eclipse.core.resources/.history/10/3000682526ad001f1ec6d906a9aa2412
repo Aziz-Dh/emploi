@@ -1,0 +1,42 @@
+package com.example.backend;
+
+  // Import the DTO
+
+import java.util.List;
+import com.example.backend.SeanceDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/seance")
+public class SeanceController {
+
+    @Autowired
+    private SeanceService seanceService;
+
+    @GetMapping
+    public List<Seance> getAllSeance() {
+        return seanceService.getAllSeance();
+    }
+
+    @GetMapping("/{id}")
+    public Seance getSeanceById(@PathVariable Long id) {
+        return seanceService.getSeanceById(id);
+    }
+
+    @PostMapping
+    public Seance createSeance(@RequestBody SeanceDTO seanceDTO) {
+        return seanceService.saveSeance(seanceDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteSeance(@PathVariable Long id) {
+        seanceService.deleteSeance(id);
+    }
+}

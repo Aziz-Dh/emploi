@@ -1,0 +1,45 @@
+package com.example.backend;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
+public class Classe {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	private String nom;
+    private String description;
+    
+    //getters and setters
+    
+    public Long GetId() {
+    	return this.id;
+    }
+    
+    public void SetId(Long Id) {
+    	this.id=Id;
+    }
+    
+    public String GetNom() {
+    	return this.nom;
+    }
+    
+    public void SetNom(String Nom) {
+    	this.nom=Nom;
+    }
+    
+    
+    
+    public String getDescription() {
+    	return this.description;
+    }
+    
+    public void SetDescription(String Description) {
+    	this.description=Description;
+    }
+	
+}

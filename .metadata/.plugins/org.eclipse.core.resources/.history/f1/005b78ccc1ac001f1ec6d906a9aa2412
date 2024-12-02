@@ -1,0 +1,27 @@
+@RestController
+@RequestMapping("/api/classes")
+public class ClasseController {
+
+    @Autowired
+    private ClasseService classeService;
+
+    @GetMapping
+    public List<Classe> getAllClasses() {
+        return classeService.getAllClasses();  // This should return a list of all classes with id, nom, description
+    }
+
+    @GetMapping("/{id}")
+    public Classe getClasseById(@PathVariable Long id) {
+        return classeService.getClasseById(id);  // Returns a specific class by id
+    }
+
+    @PostMapping
+    public Classe createClasse(@RequestBody Classe classe) {
+        return classeService.saveClasse(classe);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteClasse(@PathVariable Long id) {
+        classeService.deleteClasse(id);
+    }
+}
