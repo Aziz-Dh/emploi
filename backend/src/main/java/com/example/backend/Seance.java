@@ -8,83 +8,83 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Column;
 
 @Entity
 public class Seance {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	 private LocalDateTime dateHeureDebut;
-	 private LocalDateTime dateHeureFin;
-	 private String matiere;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	 @ManyToOne
-	 @JoinColumn(name = "classe_id")
-	 private Classe classe;
+    private LocalDateTime dateHeureDebut;
+    private LocalDateTime dateHeureFin;
+    private String matiere;
 
-	 @ManyToOne
-	 @JoinColumn(name = "professeur_id")
-	 private Professeur professeur;
-	 
-	 // Getter pour l'identifiant
-	    public Long getId() {
-	        return id;
-	    }
+    @ManyToOne
+    @JoinColumn(name = "classe_id")
+    private Classe classe;
 
-	    // Setter pour l'identifiant
-	    public void setId(Long id) {
-	        this.id = id;
-	    }
+    @ManyToOne
+    @JoinColumn(name = "professeur_id")
+    private Professeur professeur;
 
-	    // Getter pour la date et l'heure de début
-	    public LocalDateTime getDateHeureDebut() {
-	        return dateHeureDebut;
-	    }
+    @Column(name = "jour") // Maps to the "jour" column in your database
+    private String jour;
 
-	    // Setter pour la date et l'heure de début
-	    public void setDateHeureDebut(LocalDateTime dateHeureDebut) {
-	        this.dateHeureDebut = dateHeureDebut;
-	    }
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
 
-	    // Getter pour la date et l'heure de fin
-	    public LocalDateTime getDateHeureFin() {
-	        return dateHeureFin;
-	    }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	    // Setter pour la date et l'heure de fin
-	    public void setDateHeureFin(LocalDateTime dateHeureFin) {
-	        this.dateHeureFin = dateHeureFin;
-	    }
+    public LocalDateTime getDateHeureDebut() {
+        return dateHeureDebut;
+    }
 
-	    // Getter pour la matière
-	    public String getMatiere() {
-	        return matiere;
-	    }
+    public void setDateHeureDebut(LocalDateTime dateHeureDebut) {
+        this.dateHeureDebut = dateHeureDebut;
+    }
 
-	    // Setter pour la matière
-	    public void setMatiere(String matiere) {
-	        this.matiere = matiere;
-	    }
+    public LocalDateTime getDateHeureFin() {
+        return dateHeureFin;
+    }
 
-	    // Getter pour la classe
-	    public Classe getClasse() {
-	        return classe;
-	    }
+    public void setDateHeureFin(LocalDateTime dateHeureFin) {
+        this.dateHeureFin = dateHeureFin;
+    }
 
-	    // Setter pour la classe
-	    public void setClasse(Classe classe) {
-	        this.classe = classe;
-	    }
+    public String getMatiere() {
+        return matiere;
+    }
 
-	    // Getter pour le professeur
-	    public Professeur getProfesseur() {
-	        return professeur;
-	    }
+    public void setMatiere(String matiere) {
+        this.matiere = matiere;
+    }
 
-	    // Setter pour le professeur
-	    public void setProfesseur(Professeur professeur) {
-	        this.professeur = professeur;
-	    }
-	
+    public Classe getClasse() {
+        return classe;
+    }
+
+    public void setClasse(Classe classe) {
+        this.classe = classe;
+    }
+
+    public Professeur getProfesseur() {
+        return professeur;
+    }
+
+    public void setProfesseur(Professeur professeur) {
+        this.professeur = professeur;
+    }
+
+    public String getJour() {
+        return jour;
+    }
+
+    public void setJour(String jour) {
+        this.jour = jour;
+    }
 }

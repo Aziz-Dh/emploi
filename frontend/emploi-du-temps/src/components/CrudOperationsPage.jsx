@@ -12,86 +12,135 @@ const CrudOperationsPage = () => {
     dateHeureDebut: '',
     dateHeureFin: '',
     matiere: '',
-    professeurId: '',
-    classeId: '',
+    professeurId: '',  // Use professeurId instead of professeur
+    classeId: '',  // Use classeId instead of classe
   });
 
-  useEffect(() => {
-    axios.get('http://localhost:8080/api/classes')  // Your API endpoint for classes
-      .then(response => {
-        setClasses(response.data);  // Store the fetched data
-        setLoading(false);  
-      })
-      .catch(error => {
-        setError('Error fetching classes');
-        setLoading(false);  
-      });
-  }, []);  
+  const [isUpdating, setIsUpdating] = useState(false); // To track if we are updating a seance
+  const [updateSeanceId, setUpdateSeanceId] = useState(null); // Store the id of the seance being updated
 
   useEffect(() => {
-    axios.get('http://localhost:8080/seance')  // Your API endpoint for seances
+    axios.get('http://localhost:8080/api/classes')
       .then(response => {
-        setSeances(response.data);  // Store the fetched sessions
+        setClasses(response.data);
         setLoading(false);
       })
-      .catch(error => {
+      .catch(() => {
+        setError('Error fetching classes');
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios.get('http://localhost:8080/seance')
+      .then(response => {
+        setSeances(response.data);
+        setLoading(false);
+      })
+      .catch(() => {
         setError('Error fetching sessions');
         setLoading(false);
       });
   }, []);
 
-
   useEffect(() => {
-    axios.get('http://localhost:8080/professeur')  // Your API endpoint for professors
+    axios.get('http://localhost:8080/professeur')
       .then(response => {
-        setProfesseurs(response.data);  // Store the fetched professors
-        setLoading(false);  
+        setProfesseurs(response.data);
+        setLoading(false);
       })
-      .catch(error => {
+      .catch(() => {
         setError('Error fetching professors');
-        setLoading(false);  
+        setLoading(false);
       });
-  }, []);  
+  }, []);
 
-
-  // Function to handle create
   const handleCreateSeance = (e) => {
     e.preventDefault();
 
-    // Ensure that professeurId and classeId are set in the newSeance state correctly
-    axios.post('http://localhost:8080/seance', newSeance)
+    const seanceToCreate = {
+      jour: newSeance.jour,
+      dateHeureDebut: newSeance.dateHeureDebut,
+      dateHeureFin: newSeance.dateHeureFin,
+      matiere: newSeance.matiere,
+      professeur: { id: newSeance.professeurId },
+      classe: { id: newSeance.classeId },
+    };
+
+    axios.post('http://localhost:8080/seance', seanceToCreate)
       .then(response => {
-        setSeances([...seances, response.data]);  // Add the new session to the list
+        setSeances([...seances, response.data]);
         alert('Session created');
+        resetForm();
       })
-      .catch(error => {
+      .catch((error) => {
+        console.error('Error creating session:', error);
         setError('Error creating session');
       });
   };
-  
 
-  // Function to handle update
-  const handleUpdateSeance = (id) => {
-    axios.put(`http://localhost:8080/seance/${id}`, newSeance)
+  const handleUpdateSeance = (e) => {
+    e.preventDefault();
+
+    const updatedSeance = {
+      id: updateSeanceId,  // Add the id to the update payload
+      jour: newSeance.jour,
+      dateHeureDebut: newSeance.dateHeureDebut,
+      dateHeureFin: newSeance.dateHeureFin,
+      matiere: newSeance.matiere,
+      professeur: { id: newSeance.professeurId },
+      classe: { id: newSeance.classeId },
+    };
+
+    axios.put(`http://localhost:8080/seance/${updateSeanceId}`, updatedSeance)
       .then(response => {
-        setSeances(seances.map(seance => seance.id === id ? response.data : seance));
+        setSeances(seances.map((seance) =>
+          seance.id === updateSeanceId ? response.data : seance
+        ));
         alert('Session updated');
+        resetForm();
+        setIsUpdating(false);
       })
-      .catch(error => {
+      .catch((error) => {
+        console.error('Error updating session:', error);
         setError('Error updating session');
       });
   };
 
-  // Function to handle delete
   const handleDeleteSeance = (id) => {
     axios.delete(`http://localhost:8080/seance/${id}`)
       .then(() => {
-        setSeances(seances.filter(seance => seance.id !== id));
+        setSeances(seances.filter((seance) => seance.id !== id));
         alert('Session deleted');
       })
-      .catch(error => {
+      .catch((error) => {
+        console.error('Error deleting session:', error);
         setError('Error deleting session');
       });
+  };
+
+  const resetForm = () => {
+    setNewSeance({
+      jour: '',
+      dateHeureDebut: '',
+      dateHeureFin: '',
+      matiere: '',
+      professeurId: '',
+      classeId: '',
+    });
+  };
+
+  const handleEditSeance = (seance) => {
+    setNewSeance({
+      jour: seance.jour,
+      dateHeureDebut: seance.dateHeureDebut,
+      dateHeureFin: seance.dateHeureFin,
+      matiere: seance.matiere,
+      professeurId: seance.professeur?.id || '',
+      classeId: seance.classe?.id || '',
+    });
+    setUpdateSeanceId(seance.id);
+    setIsUpdating(true);
   };
 
   if (loading) {
@@ -106,9 +155,22 @@ const CrudOperationsPage = () => {
     <div>
       <h1>CRUD Operations</h1>
 
-      {/* Create Form */}
-      <h3>Create New Seance</h3>
-      <form onSubmit={handleCreateSeance}>
+      {/* Create or Update Form */}
+      <h3>{isUpdating ? 'Update Seance' : 'Create New Seance'}</h3>
+      <form onSubmit={isUpdating ? handleUpdateSeance : handleCreateSeance}>
+        <select
+          value={newSeance.jour}
+          onChange={(e) => setNewSeance({ ...newSeance, jour: e.target.value })}
+        >
+          <option value="">Select Day</option>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+        </select>
+
         <input
           type="text"
           placeholder="Matière"
@@ -126,12 +188,10 @@ const CrudOperationsPage = () => {
           onChange={(e) => setNewSeance({ ...newSeance, dateHeureFin: e.target.value })}
         />
 
-        {/* Professeur Select Dropdown */}
         <select
           value={newSeance.professeurId}
           onChange={(e) => setNewSeance({ ...newSeance, professeurId: e.target.value })}
         >
-          <option value="">Select Professeur</option>
           {professeurs.map((professeur) => (
             <option key={professeur.id} value={professeur.id}>
               {professeur.nom} - {professeur.specialite} - {professeur.email}
@@ -139,12 +199,10 @@ const CrudOperationsPage = () => {
           ))}
         </select>
 
-        {/* Classe Select Dropdown */}
         <select
           value={newSeance.classeId}
           onChange={(e) => setNewSeance({ ...newSeance, classeId: e.target.value })}
         >
-          <option value="">Select Classe</option>
           {classes.map((classe) => (
             <option key={classe.id} value={classe.id}>
               {classe.nom} - {classe.description}
@@ -152,45 +210,20 @@ const CrudOperationsPage = () => {
           ))}
         </select>
 
-        <button type="submit">Create Seance</button>
+        <button type="submit">{isUpdating ? 'Update Seance' : 'Create Seance'}</button>
       </form>
 
-      <h3>Existing Seances</h3>
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Jour</th>
-            <th>Heure Début</th>
-            <th>Heure Fin</th>
-            <th>Matière</th>
-            <th>Professeur</th>
-            <th>Salle (Classe)</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {seances.map((seance) => {
-            // Find the corresponding professeur and classe using the IDs
-            const professeur = professeurs.find((prof) => prof.id === seance.professeurId);
-            const classe = classes.find((cls) => cls.id === seance.classeId);
-
-            return (
-              <tr key={seance.id}>
-                <td>{seance.jour}</td>
-                <td>{seance.dateHeureDebut}</td>
-                <td>{seance.dateHeureFin}</td>
-                <td>{seance.matiere}</td>
-                <td>{professeur ? `${professeur.nom} - ${professeur.specialite}` : 'N/A'}</td>
-                <td>{classe ? `${classe.nom} - ${classe.description}` : 'N/A'}</td>
-                <td>
-                  <button onClick={() => handleUpdateSeance(seance.id)}>Update</button>
-                  <button onClick={() => handleDeleteSeance(seance.id)}>Delete</button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      {/* Display Seances */}
+      <h3>Seances</h3>
+      <ul>
+        {seances.map((seance) => (
+          <li key={seance.id}>
+            {seance.matiere} - {seance.jour} - {seance.professeur?.nom || 'N/A'} - {seance.classe?.nom || 'N/A'}
+            <button onClick={() => handleEditSeance(seance)}>Edit</button>
+            <button onClick={() => handleDeleteSeance(seance.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
